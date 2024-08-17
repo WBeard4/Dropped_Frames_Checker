@@ -1,8 +1,12 @@
 import ffmpeg
-import tkinter
+import Tkinter, tkFileDialog
 
 # Use tkinter to open a dialog box, and allow the user to choose a video file
 
+
+root = Tkinter.Tk()
+root.withdraw()
+dirname = tkFileDialog.askdirectory(parent=root,initialdir="/",title='Please select a directory')
 # Check the video quality and fps if poosible, though this will mostly be used for 4k60
 
 # Create a temp file, and use ffmpeg to break the video down into its frames
