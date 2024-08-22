@@ -1,17 +1,41 @@
 import ffmpeg
 import tkinter
 from tkinter import filedialog
+import subprocess
+import os
 
 # Use tkinter to open a dialog box, and allow the user to choose a video file
 
 root = tkinter.Tk()
 root.withdraw()
-video_name = filedialog.askopenfilename(parent=root,initialdir="/",title='Please select a file')
-print(video_name)
-
-# Check the video quality and fps if poosible, though this will mostly be used for 4k60
+video_name = filedialog.askopenfile(parent=root,initialdir="/",title='Please select a file')
+if video_name is not None:
+    video_path = video_name.name
 
 # Create a temp file, and use ffmpeg to break the video down into its frames
+    ffmpeg_path = 'C:\\Users\\Study\\Documents\\Projects\\Dropped_Frames_Checker\\ffmpeg\\ffmpeg.exe'
+    temp_folder = 'C:\\tmp'
+    if not os.path.exists(temp_folder):
+        os.makedirs(temp_folder)
+    output_pattern = os.path.join(temp_folder, 'test-%d.jpg')
+
+    command = [
+        ffmpeg_path,
+        '-i', video_path,  # Use the selected file as input
+        '-vf', 'fps=60',  # FPS filter
+        output_pattern,  # Output files
+        '-start_number', '0',  # Start numbering at 0
+        '-y'  # Overwrite output files without asking
+    ]
+    result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    if result.returncode == 0:
+        print('Process completed successfully.')
+        print(result.stdout)
+    else:
+        print('Process failed.')
+        print('Error output:', result.stderr)
+else:
+    print('failed')
 
 # Create a loop that runs through each frame, if frame(n) == frame(n+1), then flags it if True
 
