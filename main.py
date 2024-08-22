@@ -7,8 +7,7 @@ import numpy as np
 from PIL import Image
 import imagehash
 import re
-
-
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Use tkinter to open a dialog box, and allow the user to choose a video file
 def get_video_path():
@@ -73,7 +72,7 @@ def video_to_images(video_path, fps):
         print(command)
         print('Error output:', result.stderr)
 
-
+# This is used to make sure that the files are sorted in numerical order
 def extract_number(filename):
     """ Extract the first numerical value found in the filename. """
     match = re.search(r'(\d+)', filename)
@@ -81,51 +80,64 @@ def extract_number(filename):
         return int(match.group(1))
     return float('inf')  # Return a large number if no number is found
 
+def compute_image_hash(filepath):
+    # Compute the average hash of an image
+    try:
+        with Image.open(filepath) as img:
+            return imagehash.average_hash(img)
+    except Exception as e:
+        print(f'Error opening file {filepath}: {e}')
+        return None
 # Create a loop that runs through each frame, if frame(n) == frame(n+1), then flags it if True
 def duplicate_check():
     directory = 'C:\\tmp'
     
-    files = os.listdir(directory)
+    files = [f for f in os.listdir(directory) if f.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif'))]
     files.sort(key=extract_number)
 
     duplicates = 0
     total_comparisons = len(files) - 1
     last_percentage = -1
-    hashes = {}
+    hashes = {} # Preparing for parallel processing
 
+    # Threshold for the hamming distance. How similar pictures are. a higher number means that the images are unique. Small hamming number means it will flag images as duplicates, when they are just similar
+    hamming_threshold = 1
+    # Compute hashes in parallel
+    with ThreadPoolExecutor() as executor:
+        futures = {executor.submit(compute_image_hash, os.path.join(directory, file)): file for file in files}
+        for future in as_completed(futures):
+            file = futures[future]
+            hash_value = future.result()
+            if hash_value is not None:
+                hashes[file] = hash_value
+    
+    # Compare Hashes
     for i in range(len(files) - 1):
-        file1 = os.path.join(directory, files[i])
-        file2 = os.path.join(directory, files[i+1])
+        file1 = files[i]
+        file2 = files[i + 1]
 
-        try:
+        hash1 = hashes.get(file1)
+        hash2 = hashes.get(file2)
 
-            with Image.open(file1) as img1, Image.open(file2) as img2:
-                # Convert images to numpy arrays
-                arr1 = np.array(img1)
-                arr2 = np.array(img2)
-                
-
-                
-                # Check if the images are identical
-                if arr1.shape == arr2.shape and np.array_equal(arr1, arr2):
-                    print(f'Duplicate frame found: {files[i]} and {files[i + 1]}')
-                    duplicates += 1
-
-        except Exception as e:
-            print(f'Error opening files {file1} or {file2}: {e}')
+        if hash1 and hash2:
+            hamming_distance = hash1 - hash2
+            if hamming_distance < hamming_threshold:
+                print(f'Duplicate found: {file1} and {file2} with Hamming distance: {hamming_distance}')
+                duplicates += 1
         
-                # Calculate the current percentage complete
+
+
+        # Calculate the current percentage complete
         percent_complete = int((i + 1) / total_comparisons * 100)
         
         # Print the percentage only if it has changed
         if percent_complete > last_percentage:
             print(f'Progress: {percent_complete}% complete')
-            last_percentage = percent_complete
-
+            last_percentage = percent_complete      
     if duplicates == 0:
         print('No duplicates found')
     else:
-        print(f'{duplicates} duplicates found')        
+        print(f'{duplicates} duplicates found')
 # Potentiall provide information on what exact frames are dropped, find out if needed
 
 '''
@@ -133,9 +145,9 @@ Could potentially see if doing 60 frames at a time is faster, rather than breaki
     This means that frames 60 61 might be seperate, so would need to account for that'''
 
 def main():
-    video_path = get_video_path()
-    fps = get_fps_accurate(video_path)
-    video_to_images(video_path, fps)
+    #video_path = get_video_path()
+    #fps = get_fps_accurate(video_path)
+    #video_to_images(video_path, fps)
     duplicate_check()
 
 ffmpeg_path = 'C:\\Users\\Study\\Documents\\Projects\\Dropped_Frames_Checker\\ffmpeg\\ffmpeg.exe'
