@@ -101,8 +101,8 @@ def duplicate_check():
     hashes = {} # Preparing for parallel processing
 
     # Threshold for the hamming distance. How similar pictures are. a higher number means that the images are unique. Small hamming number means it will flag images as duplicates, when they are just similar
-    hamming_threshold = 1
     # Compute hashes in parallel
+    print("Creating image hashes for comparison")
     with ThreadPoolExecutor() as executor:
         futures = {executor.submit(compute_image_hash, os.path.join(directory, file)): file for file in files}
         for future in as_completed(futures):
@@ -121,9 +121,16 @@ def duplicate_check():
 
         if hash1 and hash2:
             hamming_distance = hash1 - hash2
-            if hamming_distance < hamming_threshold:
-                print(f'Duplicate found: {file1} and {file2} with Hamming distance: {hamming_distance}')
-                duplicates += 1
+            if hamming_distance == 0:
+                # Adding pixel by pixel comparison for exact matches
+                img1 = Image.open(os.path.join(directory, file1))
+                img2 = Image.open(os.path.join(directory, file2))
+                np_img1 = np.array(img1)
+                np_img2 = np.array(img2)
+
+                if np.array_equal(np_img1, np_img2):
+                    print(f'Duplicate found: {file1} and {file2} with Hamming distance: {hamming_distance}')
+                    duplicates += 1
         
 
 
