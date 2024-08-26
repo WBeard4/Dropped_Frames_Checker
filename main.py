@@ -8,6 +8,7 @@ from PIL import Image
 import imagehash
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed
+import shutil
 
 # Use tkinter to open a dialog box, and allow the user to choose a video file
 def get_video_path():
@@ -145,17 +146,27 @@ def duplicate_check():
         print('No duplicates found')
     else:
         print(f'{duplicates} duplicates found')
+        return duplicates
 # Potentiall provide information on what exact frames are dropped, find out if needed
 
-'''
-Could potentially see if doing 60 frames at a time is faster, rather than breaking the entire video down at once
-    This means that frames 60 61 might be seperate, so would need to account for that'''
+def cleanup(duplicates):
+    temp_folder = 'C:\\tmp'
+    if duplicates < 0:
+        choice = input(f"See frames in {temp_folder}. Press 1 to cleanup once frames have been checked manually")
+        if choice == 1:
+            if os.path.exists(temp_folder):
+                try:
+                    shutil.rmtree(temp_folder)
+                    print("Temp folder has been cleaned up")
+                except Exception as e:
+                    print(f"Cleanup error: {e}")
 
 def main():
-    #video_path = get_video_path()
-    #fps = get_fps_accurate(video_path)
-    #video_to_images(video_path, fps)
-    duplicate_check()
+    video_path = get_video_path()
+    fps = get_fps_accurate(video_path)
+    video_to_images(video_path, fps)
+    duplicates = duplicate_check()
+    cleanup(duplicates)
 
 ffmpeg_path = 'C:\\Users\\Study\\Documents\\Projects\\Dropped_Frames_Checker\\ffmpeg\\ffmpeg.exe'
 main()
