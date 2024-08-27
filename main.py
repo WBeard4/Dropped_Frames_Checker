@@ -165,8 +165,8 @@ def main():
     video_path = get_video_path()
     fps = get_fps_accurate(video_path)
     video_to_images(video_path, fps)
-    duplicates = duplicate_check()
-    cleanup(duplicates)
+    #duplicates = duplicate_check()
+    #cleanup(duplicates)
 
 ffmpeg_path = 'C:\\Users\\Study\\Documents\\Projects\\Dropped_Frames_Checker\\ffmpeg\\ffmpeg.exe'
 main()

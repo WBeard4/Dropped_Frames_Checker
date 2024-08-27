@@ -5,6 +5,7 @@ from PIL import Image
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import tkinter
 from tkinter import filedialog
+import time
 
 # Use tkinter to open a dialog box, and allow the user to choose a video file
 def get_video_path():
@@ -37,7 +38,9 @@ def duplicate_check(video_path):
     frame_number = 0
 
     # Read the frames from the video
+   
     while True:
+
         ret, frame = video.read()
         if not ret:
             break # End of video
@@ -45,13 +48,17 @@ def duplicate_check(video_path):
         # Compute has for the frame we are on currently
         current_hash = compute_frame_hash(frame)
 
+            # Get the current frame timestamp in milliseconds
+        frame_time_ms = video.get(cv2.CAP_PROP_POS_MSEC)
+        frame_time_s = frame_time_ms / 1000  # Convert milliseconds to seconds
+
         # Compare the current frame with the last frame hash
         if last_hash is not None and current_hash is not None:
             hamming_distance = last_hash - current_hash
             if hamming_distance == 0:
                 # Check pixel by pixel
                 if last_frame is not None and np.array_equal(last_frame, frame):
-                    print(f'Duplicate found at frame {frame_number}')
+                    print(f'Duplicate found at frame {frame_number} at {frame_time_s:.2f} seconds')
                     duplicates += 1
 
         last_hash = current_hash
@@ -66,7 +73,12 @@ def duplicate_check(video_path):
     return duplicates
 
 def main():
+    # Added a start and end time, to see how long the program took to run
+    start = time.time()
     video_path = get_video_path()
     if video_path:
-        duplicates = duplicate_check(video_path)
+        duplicate_check(video_path)
+    end = time.time()
+    length = end - start
+    print(f"Script took {int(length)} seconds")
 main()
