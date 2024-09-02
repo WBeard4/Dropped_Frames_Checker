@@ -3,16 +3,24 @@ from tkinter import *
 from tkinter import ttk
 from video_check import *
 
+# Defining root to be able to close the window
+root = None
 def folder_selected_temp():
     print("Folder Option Selected")
 
 def single_video():
+    global root
+    root.destroy()
     video_check()
 
+
 def folder():
+    global root
+    root.destroy()
     folder_check()
 
 def main_menu():
+    global root
     # Create the main window
     root = tk.Tk()
     root.title("Select an Option")
