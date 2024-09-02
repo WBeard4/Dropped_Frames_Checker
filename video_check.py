@@ -73,7 +73,7 @@ def duplicate_check(video_path):
         print(f"{duplicates} duplicates found")
     return duplicates
 
-def main():
+def video_check():
     # Added a start and end time, to see how long the program took to run
     start = time.time()
     video_path = get_video_path()
@@ -82,5 +82,6 @@ def main():
     end = time.time()
     length = end - start
     print(f"Script took {int(length)} seconds")
-if __name__ == "__main__":
-    main()
+
+def folder_check():
+    pass
