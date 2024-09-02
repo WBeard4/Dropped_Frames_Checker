@@ -37,6 +37,17 @@ def compute_frame_hash(frame):
         print(f"Compute_frame_hash error: {e}")
         return None
 
+# Using Mean Squared Error to check the similarity between images, rather than np.array_equal, to be able to control tolerences
+def mse(imageA, imageB):
+    # Compute the Mean Squared Error between the two images
+    err = np.sum((imageA.astype("float") - imageB.astype("float")) ** 2)
+    err /= float(imageA.shape[0] * imageA.shape[1])
+    return err
+
+def is_similar(imageA, imageB, threshold=1000):  # threshold can be adjusted
+    # Compute MSE and check if it's within the threshold
+    return mse(imageA, imageB) < threshold
+
 def duplicate_check(video_path):
     # Open the video using CV2, rather than creating temp images
     video = cv2.VideoCapture(video_path)
@@ -71,7 +82,7 @@ def duplicate_check(video_path):
             hamming_distance = last_hash - current_hash
             if hamming_distance == 0:
                 # Check pixel by pixel
-                if last_frame is not None and np.array_equal(last_frame, frame):
+                if last_frame is not None and is_similar(last_frame, frame):
                     logger.log_without_time(f'Duplicate found at frame {frame_number} at {frame_time_s:.2f} seconds')
                     duplicates += 1
 
