@@ -6,6 +6,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import tkinter
 from tkinter import filedialog
 import time
+import os
 
 # Use tkinter to open a dialog box, and allow the user to choose a video file
 def get_video_path():
@@ -15,7 +16,13 @@ def get_video_path():
     if video_name is not None:
         video_path = video_name.name
         return video_path
-
+    
+def get_folder_path():
+    root = tkinter.Tk()
+    root.withdraw()    
+    folder_path = filedialog.askdirectory()
+    if folder_path is not None:
+        return folder_path
 
 # Using CV2 to open each frame and generate an image hash, without needed to turn the video into images    
 def compute_frame_hash(frame):
@@ -84,4 +91,18 @@ def video_check():
     print(f"Script took {int(length)} seconds")
 
 def folder_check():
-    pass
+    # This will get the folder path, and then run duplicate_check on each of the videos
+    start = time.time()
+    folder_path = get_folder_path()
+    if folder_path:
+        for file_name in os.listdir(folder_path):
+            # Create the filepath for each video to be used in duplicate_check
+            video_path = os.path.join(folder_path, file_name)
+
+            if file_name.lower().endswith(('.mp4', '.avi', '.mkv')):
+                print(f"Processing video:{video_path}")
+                duplicate_check(video_path)
+    end = time.time()
+    length = end - start
+    print(f"Processed all videos in {int(length)} seconds")
+
