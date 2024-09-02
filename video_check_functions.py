@@ -5,8 +5,12 @@ from PIL import Image
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import tkinter
 from tkinter import filedialog
-import time
 import os
+from log_tool import Logger
+import time
+
+# Creating logger instance
+logger = Logger()
 
 # Use tkinter to open a dialog box, and allow the user to choose a video file
 def get_video_path():
@@ -40,6 +44,8 @@ def duplicate_check(video_path):
         print(f"Error: Could not open video {video_path}")
         return
 
+    logger.log_with_time(f"{video_path}\n")
+
     duplicates = 0
     last_hash = None
     last_frame = None
@@ -66,7 +72,7 @@ def duplicate_check(video_path):
             if hamming_distance == 0:
                 # Check pixel by pixel
                 if last_frame is not None and np.array_equal(last_frame, frame):
-                    print(f'Duplicate found at frame {frame_number} at {frame_time_s:.2f} seconds')
+                    logger.log_without_time(f'Duplicate found at frame {frame_number} at {frame_time_s:.2f} seconds')
                     duplicates += 1
 
         last_hash = current_hash
@@ -76,8 +82,10 @@ def duplicate_check(video_path):
 
     if duplicates == 0:
         print("No duplicates found")
+        logger.log_with_time(f"Video fully processed: No duplicates found \n")
     else:
         print(f"{duplicates} duplicates found")
+        logger.log_with_time(f"Video fully processed: {duplicates} duplicates found\nEnd of Video\n")
     return duplicates
 
 def video_check():
@@ -85,6 +93,7 @@ def video_check():
     start = time.time()
     video_path = get_video_path()
     if video_path:
+        print(f"Processing video:{video_path}")
         duplicate_check(video_path)
     end = time.time()
     length = end - start

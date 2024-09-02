@@ -1,7 +1,8 @@
 import tkinter as tk
 from tkinter import *
 from tkinter import ttk
-from video_check import *
+from video_check_functions import *
+import sys
 
 # Defining root to be able to close the window
 root = None
@@ -12,12 +13,14 @@ def single_video():
     global root
     root.destroy()
     video_check()
+    sys.exit()
 
 
 def folder():
     global root
     root.destroy()
     folder_check()
+    sys.exit()
 
 def main_menu():
     global root
@@ -36,4 +39,7 @@ def main_menu():
     # Run the application
     root.mainloop()
 
-main_menu()
+try:
+    main_menu()
+except:
+    sys.exit()
