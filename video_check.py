@@ -15,7 +15,8 @@ def get_video_path():
     if video_name is not None:
         video_path = video_name.name
         return video_path
-    
+
+
 # Using CV2 to open each frame and generate an image hash, without needed to turn the video into images    
 def compute_frame_hash(frame):
     try:
@@ -81,4 +82,5 @@ def main():
     end = time.time()
     length = end - start
     print(f"Script took {int(length)} seconds")
-main()
+if __name__ == "__main__":
+    main()
