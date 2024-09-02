@@ -27,7 +27,7 @@ def main_menu():
     # Create the main window
     root = tk.Tk()
     root.title("Select an Option")
-    root.geometry("300x150")
+    root.geometry("600x300")
 
     # Create and place buttons
     folder_button = tk.Button(root, text="Folder", command=folder, width=20, height=2)

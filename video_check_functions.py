@@ -44,7 +44,7 @@ def mse(imageA, imageB):
     err /= float(imageA.shape[0] * imageA.shape[1])
     return err
 
-def is_similar(imageA, imageB, threshold=1000):  # threshold can be adjusted
+def is_similar(imageA, imageB, threshold=7.3):  # threshold can be adjusted
     # Compute MSE and check if it's within the threshold
     return mse(imageA, imageB) < threshold
 
@@ -82,7 +82,11 @@ def duplicate_check(video_path):
             hamming_distance = last_hash - current_hash
             if hamming_distance == 0:
                 # Check pixel by pixel
-                if last_frame is not None and is_similar(last_frame, frame):
+                if '.mov' in video_path: # .mov needs a different check. Needs testing
+                    if last_frame is not None and is_similar(last_frame, frame):
+                        logger.log_without_time(f'Duplicate found at frame {frame_number} at {frame_time_s:.2f} seconds')
+                        duplicates += 1
+                elif last_frame is not None and np.array_equal(last_frame, frame):
                     logger.log_without_time(f'Duplicate found at frame {frame_number} at {frame_time_s:.2f} seconds')
                     duplicates += 1
 
@@ -119,7 +123,7 @@ def folder_check():
             # Create the filepath for each video to be used in duplicate_check
             video_path = os.path.join(folder_path, file_name)
 
-            if file_name.lower().endswith(('.mp4', '.avi', '.mkv')):
+            if file_name.lower().endswith(('.mp4', '.avi', '.mkv', '.mov')):
                 print(f"Processing video:{video_path}")
                 duplicate_check(video_path)
     end = time.time()
