@@ -3,16 +3,21 @@ from tkinter import *
 from tkinter import ttk
 from video_check_functions import *
 import sys
+import webbrowser
 
 # Defining root to be able to close the window
 root = None
 def folder_selected_temp():
     print("Folder Option Selected")
 
+def open_log():
+    webbrowser.open('log.txt')
+
 def single_video():
     global root
     root.destroy()
     video_check()
+    open_log()
     sys.exit()
 
 
@@ -20,6 +25,7 @@ def folder():
     global root
     root.destroy()
     folder_check()
+    open_log()
     sys.exit()
 
 def main_menu():
