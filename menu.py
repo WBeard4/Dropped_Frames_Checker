@@ -45,7 +45,5 @@ def main_menu():
     # Run the application
     root.mainloop()
 
-try:
-    main_menu()
-except:
-    sys.exit()
+
+main_menu()
