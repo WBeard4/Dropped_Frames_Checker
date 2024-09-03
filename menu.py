@@ -4,6 +4,7 @@ from tkinter import ttk
 from video_check_functions import *
 import sys
 import webbrowser
+import os
 
 # Defining root to be able to close the window
 root = None
@@ -11,7 +12,9 @@ def folder_selected_temp():
     print("Folder Option Selected")
 
 def open_log():
-    webbrowser.open('log.txt')
+    filepath = os.getcwd()
+    file_uri = 'file:///' + filepath + '/log.txt' 
+    webbrowser.open_new_tab(file_uri)
 
 def single_video():
     global root
