@@ -24,7 +24,6 @@ The application requires the following Python packages, which are listed in the 
 - `tk==0.1.0`
 
 To install the required packages, use:
-
 `pip install -r requirements.txt`
 
 
@@ -37,7 +36,6 @@ To install the required packages, use:
 2. **Install Dependencies:**
 
 After navigating to the project directory, install the required Python packages:
-
 `pip install -r requirements.txt`
 
 
