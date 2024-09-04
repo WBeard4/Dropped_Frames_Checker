@@ -107,10 +107,6 @@ Duplicate found at frame 518 at 17.28 seconds
 - **Extended Format Support:** Adding support for more video formats and codecs.
 - **Real-time Monitoring:** Implementing real-time video monitoring to detect dropped frames during live streams.
 
-## Contributing
-
-Feel free to fork this repository, submit pull requests, or open issues if you encounter any bugs or have suggestions for improvement.
-
 ## License
 
 Copyright 2024 William Beard
