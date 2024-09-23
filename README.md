@@ -9,7 +9,8 @@ The **Dropped Frames Checker** is a Python-based tool designed to identify dropp
 - **Single Video Processing:** Select and scan a single video file for dropped frames.
 - **Batch Processing:** Scan all video files in a chosen folder.
 - **Frame Comparison:** Detects dropped frames by comparing image hashes and pixel-level data.
-- **Logging:** Results are logged with timestamps to `log.txt`.
+- **Results Logging:** Results are logged with timestamps to `log.txt`.
+- **Error Logging:** Results are logged with timestamps to `error_log.txt`.
 
 ## Requirements
 
