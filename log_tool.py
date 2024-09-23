@@ -25,9 +25,28 @@ class Logger:
         self.logger_without_time.addHandler(self.file_handler_without_time)
 
     def log_without_time(self, message):
-        # This will log a message with a timestamp
+        # This will log a message without a timestamp
         self.logger_without_time.info(message)
 
     def log_with_time(self, message):
-        # Log a message without timestamp
+        # Log a message with timestamp
         self.logger_with_time.info(message)
+
+class ErrorLogger:
+    def __init__(self, filename="error_log.txt"):
+        self.error_logger = logging.getLogger('error_logger')
+        self.error_logger.setLevel(logging.WARNING)
+
+        # Error file handler
+        self.file_handler = logging.FileHandler(filename, encoding='utf-8')
+        self.formatter = logging.Formatter('%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+        self.file_handler.setFormatter(self.formatter)
+        self.error_logger.addHandler(self.file_handler)
+    
+    def log_error(self, error_message):
+        # Log an error message
+        self.error_logger.error(error_message)
+
+    def log_warning(self, warning_message):
+        # Log a warning
+        self.error_logger.warning(warning_message)

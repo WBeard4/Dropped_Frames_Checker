@@ -5,7 +5,9 @@ from video_check_functions import *
 import sys
 import webbrowser
 import os
+from log_tool import ErrorLogger
 
+error_logger = ErrorLogger()
 # Defining root to be able to close the window
 root = None
 def folder_selected_temp():
@@ -48,5 +50,8 @@ def main_menu():
     # Run the application
     root.mainloop()
 
+try:
+    main_menu()
+except Exception as e:
+    error.log_error(e)
 
-main_menu()
